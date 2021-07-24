@@ -8,24 +8,32 @@ struct decision_tree_classifier : std::enable_shared_from_this<decision_tree_cla
 
     ///constructs from num_of_classes and training dataset
     decision_tree_classifier(size_t num_of_classes,
-                             std::vector<std::vector<double>>& X,
-                             std::vector<int>& y);
-
+                             const std::vector<std::vector<double>>& X,
+                             const std::vector<int>& y,
+                             double precision = 0.1);
 
 private:
+
+    std::pair<size_t, double> condition;
 
     /// if condition is false
     std::shared_ptr<decision_tree_classifier> left;
     /// if condition is true
     std::shared_ptr<decision_tree_classifier> right;
 
-    ///
+    /// number of classification classes
     size_t classes_num;
 
+    /// the biggest gini informativty in leaf of the tree
+    double precision;
+
+
+    /// the leaf variable, which points to a class of an object
+    size_t decision = 0;
 
     /// splits the data with the best condition and generates left and right children
-    void generate_children(std::vector<std::vector<double>>& X,
-                           std::vector<int>& y);
+    void generate_children(const std::vector<std::vector<double>>& X,
+                           const std::vector<int>& y);
 
 
     /// returns the best best_split of the data
@@ -45,4 +53,6 @@ private:
     /// calculates the gini's informativity
     double gini(const std::vector<int>& y) const;
 
+
+    size_t the_most_popular_class(const std::vector<int>& y) const;
 };

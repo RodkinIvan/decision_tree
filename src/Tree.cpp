@@ -1,16 +1,25 @@
 #include "Tree.h"
 
 decision_tree_classifier::decision_tree_classifier(size_t num_of_classes,
-                                                   std::vector<std::vector<double>>& X,
-                                                   std::vector<int>& y) {
+                                                   const std::vector<std::vector<double>>& X,
+                                                   const std::vector<int>& y,
+                                                   double precision) : classes_num(num_of_classes),
+                                                                       precision(precision) {
     assert(X.size() == y.size());
     generate_children(X, y);
 }
 
 
-void decision_tree_classifier::generate_children(std::vector<std::vector<double>>& X,
-                                                 std::vector<int>& y) {
+void decision_tree_classifier::generate_children(const std::vector<std::vector<double>>& X,
+                                                 const std::vector<int>& y) {
     assert(X.size() == y.size());
+    double inf = gini(y);
+    if (inf == 0 || gini(y) < precision) {
+        left = nullptr;
+        right = nullptr;
+        decision = the_most_popular_class(y);
+        return;
+    }
     auto[left_X, left_y, right_X, right_y] = best_split(X, y);
     left = std::make_shared<decision_tree_classifier>(classes_num, left_X, left_y);
     right = std::make_shared<decision_tree_classifier>(classes_num, right_X, right_y);
@@ -22,19 +31,18 @@ std::tuple<std::vector<std::vector<double>>, std::vector<int>, std::vector<std::
 decision_tree_classifier::best_split(const std::vector<std::vector<double>>& X, const std::vector<int>& y) {
     assert(X.size() == y.size());
 
-    /// copy of layer of features of x for sorting candidates
-    size_t iter = 0;
     std::pair<size_t, double> the_best_separation;
     double best_quality = 0;
     for (size_t feature = 0; feature < X[0].size(); ++feature) {
         for (auto& x : X) {
             double q = quality(X, y, feature, x[feature]);
-            if (q > best_quality) {
+            if (q >= best_quality) {
                 the_best_separation = std::make_pair(feature, x[feature]);
                 best_quality = q;
             }
         }
     }
+    condition = the_best_separation;
     return split(X, y, the_best_separation.first, the_best_separation.second);
 }
 
@@ -45,9 +53,10 @@ double decision_tree_classifier::quality(const std::vector<std::vector<double>>&
     assert(X.size() == y.size());
 
     auto[left_X, left_y, right_X, right_y] = split(X, y, feature, sep);
-
-    return gini(y) - static_cast<double>(left_y.size()) / static_cast<double>(y.size()) * gini(left_y)
-           - static_cast<double>(right_y.size()) / static_cast<double>(y.size()) * gini(right_y);
+    double left_inf = gini(left_y);
+    double right_inf = gini(right_y);
+    return gini(y) - static_cast<double>(left_y.size()) / static_cast<double>(y.size()) * left_inf
+           - static_cast<double>(right_y.size()) / static_cast<double>(y.size()) * right_inf;
 }
 
 
@@ -67,7 +76,7 @@ decision_tree_classifier::split(const std::vector<std::vector<double>>& X, const
             left_y.push_back(y[i]);
         } else {
             right_X.push_back(X[i]);
-            left_y.push_back(y[i]);
+            right_y.push_back(y[i]);
         }
     }
     return {left_X, left_y, right_X, right_y};
@@ -87,6 +96,21 @@ double decision_tree_classifier::gini(const std::vector<int>& y) const {
         sum += p * (1 - p);
     }
     return sum;
+
+}
+
+size_t decision_tree_classifier::the_most_popular_class(const std::vector<int>& y) const {
+    std::vector<int> num_of_each(classes_num);
+    size_t the_most_class = 0;
+    size_t the_biggest_num = 0;
+    for (auto c : y) {
+        ++num_of_each[c];
+        if (num_of_each[c] > the_biggest_num) {
+            the_biggest_num = num_of_each[c];
+            the_most_class = c;
+        }
+    }
+    return the_most_class;
 
 }
 
