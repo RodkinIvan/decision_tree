@@ -36,8 +36,8 @@ std::vector<std::vector<T>> to_2d_vector(const py::object& iterable) {
 }
 
 
-/// class helper to get container arguments
-class clf_wrapper : decision_tree_classifier {
+/// class-helper to get container arguments
+class clf_wrapper : public decision_tree_classifier {
 public:
     explicit clf_wrapper(int num) : decision_tree_classifier(num) {}
 
@@ -50,8 +50,10 @@ public:
     }
 };
 
+
 BOOST_PYTHON_MODULE (decision_tree) {
     py::to_python_converter<std::vector<int>, vector_to_list<int>>();
+
     py::class_<clf_wrapper>("decision_tree_classifier", py::init<int>())
             .def("fit", &clf_wrapper::fit)
             .def("predict", &clf_wrapper::predict);

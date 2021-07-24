@@ -11,9 +11,8 @@ void adecvatnost_test() {
                                           {1,   0},
                                           {1,   1}};
     std::vector<int> y = {0, 1, 1, 1, 0};
-    decision_tree_classifier clf(2,
-                                 X,
-                                 y);
+    decision_tree_classifier clf(2);
+    clf.fit(X, y);
     std::vector<int> pred = clf.predict(X);
     assert(pred == y);
 }
@@ -60,7 +59,6 @@ void accuracy_on_training_set_test() {
 void accuracy_on_real_test() {
     size_t num_of_points = 100;
     auto[X, y] = make_binary_points_classification(num_of_points, in_circle);
-//    decision_tree_classifier clf(2, X, y);
     decision_tree_classifier clf(2);
     clf.fit(X, y);
 

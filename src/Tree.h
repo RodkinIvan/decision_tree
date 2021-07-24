@@ -9,7 +9,8 @@ struct decision_tree_classifier {
 
 
     /// default constructor
-    explicit decision_tree_classifier(size_t num_of_classes) : classes_num(num_of_classes) {}
+    explicit decision_tree_classifier(size_t num_of_classes, double precision = 0.1) : classes_num(num_of_classes),
+                                                                                       precision(precision) {}
 
     ///constructs from num_of_classes and training dataset (default constructor + fit)
     decision_tree_classifier(size_t num_of_classes,
@@ -22,8 +23,9 @@ struct decision_tree_classifier {
     int predict(const std::vector<double>& x) const;
 
     std::vector<int> predict(const std::vector<std::vector<double>>& X) const;
-private:
 
+
+protected:
     /// the pair with the feature num and separator which responds to condition x[feature] >= separator
     std::pair<size_t, double> condition;
 

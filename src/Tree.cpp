@@ -13,8 +13,9 @@ decision_tree_classifier::decision_tree_classifier(size_t num_of_classes,
 void decision_tree_classifier::generate_children(const std::vector<std::vector<double>>& X,
                                                  const std::vector<int>& y) {
     assert(X.size() == y.size());
+
     double inf = gini(y);
-    if (inf == 0 || gini(y) < precision) {
+    if (inf == 0 || inf < precision) {
         left = nullptr;
         right = nullptr;
         decision = the_most_popular_class(y);
@@ -23,7 +24,6 @@ void decision_tree_classifier::generate_children(const std::vector<std::vector<d
     auto[left_X, left_y, right_X, right_y] = best_split(X, y);
     left = std::make_shared<decision_tree_classifier>(classes_num, left_X, left_y);
     right = std::make_shared<decision_tree_classifier>(classes_num, right_X, right_y);
-    /// condition should be a field of the class
 }
 
 
