@@ -4,7 +4,7 @@
 #include <cassert>
 #include <algorithm>
 
-struct decision_tree_classifier {
+struct decision_tree_classifier : std::enable_shared_from_this<decision_tree_classifier> {
 
     ///constructs from num_of_classes and training dataset
     decision_tree_classifier(size_t num_of_classes,
@@ -24,8 +24,7 @@ private:
 
 
     /// splits the data with the best condition and generates left and right children
-    void generate_children(std::shared_ptr<decision_tree_classifier>& node,
-                           std::vector<std::vector<double>>& X,
+    void generate_children(std::vector<std::vector<double>>& X,
                            std::vector<int>& y);
 
 
@@ -36,12 +35,12 @@ private:
 
     /// evaluates the quality of best_split
     double quality(const std::vector<std::vector<double>>& X,
-                          const std::vector<int>& y,
-                          size_t class_num,
-                          double sep);
+                   const std::vector<int>& y,
+                   size_t feature,
+                   double sep);
 
     std::tuple<std::vector<std::vector<double>>, std::vector<int>, std::vector<std::vector<double>>, std::vector<int>>
-    split(std::vector<std::vector<double>>& X, std::vector<int>& y, size_t class_num, double sep);
+    split(const std::vector<std::vector<double>>& X, const std::vector<int>& y, size_t feature, double sep);
 
     /// calculates the gini's informativity
     double gini(const std::vector<int>& y) const;
