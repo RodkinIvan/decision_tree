@@ -6,6 +6,12 @@ namespace py = boost::python;
 namespace np = boost::python::numpy;
 
 
+
+using array = py::list;
+template<typename T>
+using iterator = py::stl_input_iterator<T>;
+
+
 /// std::vector to python list converter
 template<typename T>
 struct vector_to_list {
@@ -18,18 +24,21 @@ struct vector_to_list {
     }
 };
 
+
 template<typename T>
 inline
-std::vector<T> to_std_vector(const py::object& iterable) {
-    return std::vector<T>(py::stl_input_iterator<T>(iterable),
-                          py::stl_input_iterator<T>());
+std::vector<T> to_std_vector(const array& iterable) {
+    return std::vector<T>(iterator<T>(iterable),
+                          iterator<T>());
+
 }
 
 template<typename T>
 inline
-std::vector<std::vector<T>> to_2d_vector(const py::object& iterable) {
+std::vector<std::vector<T>> to_2d_vector(const array& iterable) {
     std::vector<std::vector<T>> ans;
-    for (auto iter = py::stl_input_iterator<py::list>(iterable); iter != py::stl_input_iterator<py::list>(); ++iter) {
+    for (auto iter = iterator<array>(iterable);
+         iter != iterator<array>(); ++iter) {
         ans.push_back(to_std_vector<T>(*iter));
     }
     return ans;
@@ -41,17 +50,14 @@ class clf_wrapper : public decision_tree_classifier {
 public:
     explicit clf_wrapper(int num) : decision_tree_classifier(num) {}
 
-    void fit(py::list& X, py::list& y) {
-        decision_tree_classifier::fit(to_2d_vector<double>(X), to_std_vector<int>(y));
+    void fit(array& X, array& y) {
+        decision_tree_classifier::fit(to_2d_vector<double>(py::list(X)), to_std_vector<int>(py::list(y)));
     }
 
-    std::vector<int> predict(py::list& X) {
+    std::vector<int> predict(array& X) {
         return decision_tree_classifier::predict(to_2d_vector<double>(X));
     }
 
-    std::vector<int> predict(np::ndarray& X) {
-        return decision_tree_classifier::predict(to_2d_vector<double>(X));
-    }
 };
 
 
