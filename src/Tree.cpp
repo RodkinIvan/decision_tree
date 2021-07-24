@@ -99,9 +99,9 @@ double decision_tree_classifier::gini(const std::vector<int>& y) const {
 
 }
 
-size_t decision_tree_classifier::the_most_popular_class(const std::vector<int>& y) const {
+int decision_tree_classifier::the_most_popular_class(const std::vector<int>& y) const {
     std::vector<int> num_of_each(classes_num);
-    size_t the_most_class = 0;
+    int the_most_class = 0;
     size_t the_biggest_num = 0;
     for (auto c : y) {
         ++num_of_each[c];
@@ -111,8 +111,29 @@ size_t decision_tree_classifier::the_most_popular_class(const std::vector<int>& 
         }
     }
     return the_most_class;
-
 }
+
+
+int decision_tree_classifier::predict(const std::vector<double>& x) const {
+    auto node = this;
+    const decision_tree_classifier* parent = nullptr;
+    while (node != nullptr) {
+        parent = node;
+        node = x[node->condition.first] < node->condition.second ? node->left.get() : node->right.get();
+    }
+    return parent->decision;
+}
+
+
+std::vector<int> decision_tree_classifier::predict(const std::vector<std::vector<double>>& X) const {
+
+    std::vector<int> ans(X.size());
+    for (size_t i = 0; i < X.size(); ++i) {
+        ans[i] = predict(X[i]);
+    }
+    return ans;
+}
+
 
 
 

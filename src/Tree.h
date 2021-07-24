@@ -1,8 +1,9 @@
+#pragma once
+
 #include <iostream>
 #include <vector>
 #include <memory>
 #include <cassert>
-#include <algorithm>
 
 struct decision_tree_classifier : std::enable_shared_from_this<decision_tree_classifier> {
 
@@ -12,8 +13,12 @@ struct decision_tree_classifier : std::enable_shared_from_this<decision_tree_cla
                              const std::vector<int>& y,
                              double precision = 0.1);
 
+    int predict(const std::vector<double>& x) const;
+
+    std::vector<int> predict(const std::vector<std::vector<double>>& X) const;
 private:
 
+    /// the pair with the feature num and separator which responds to condition x[feature] >= separator
     std::pair<size_t, double> condition;
 
     /// if condition is false
@@ -29,7 +34,7 @@ private:
 
 
     /// the leaf variable, which points to a class of an object
-    size_t decision = 0;
+    int decision = 0;
 
     /// splits the data with the best condition and generates left and right children
     void generate_children(const std::vector<std::vector<double>>& X,
@@ -47,12 +52,14 @@ private:
                    size_t feature,
                    double sep);
 
-    std::tuple<std::vector<std::vector<double>>, std::vector<int>, std::vector<std::vector<double>>, std::vector<int>>
+    static std::tuple<std::vector<std::vector<double>>, std::vector<int>, std::vector<std::vector<double>>, std::vector<int>>
     split(const std::vector<std::vector<double>>& X, const std::vector<int>& y, size_t feature, double sep);
 
     /// calculates the gini's informativity
     double gini(const std::vector<int>& y) const;
 
+    /// trivial act
+    int the_most_popular_class(const std::vector<int>& y) const;
 
-    size_t the_most_popular_class(const std::vector<int>& y) const;
+
 };
