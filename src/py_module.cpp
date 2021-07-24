@@ -48,6 +48,10 @@ public:
     std::vector<int> predict(py::list& X) {
         return decision_tree_classifier::predict(to_2d_vector<double>(X));
     }
+
+    std::vector<int> predict(np::ndarray& X) {
+        return decision_tree_classifier::predict(to_2d_vector<double>(X));
+    }
 };
 
 
