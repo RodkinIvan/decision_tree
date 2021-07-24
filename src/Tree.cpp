@@ -27,6 +27,12 @@ void decision_tree_classifier::generate_children(const std::vector<std::vector<d
 }
 
 
+void decision_tree_classifier::fit(const std::vector<std::vector<double>>& X, const std::vector<int>& y) {
+    assert(X.size() == y.size());
+    generate_children(X, y);
+}
+
+
 std::tuple<std::vector<std::vector<double>>, std::vector<int>, std::vector<std::vector<double>>, std::vector<int>>
 decision_tree_classifier::best_split(const std::vector<std::vector<double>>& X, const std::vector<int>& y) {
     assert(X.size() == y.size());
@@ -133,6 +139,7 @@ std::vector<int> decision_tree_classifier::predict(const std::vector<std::vector
     }
     return ans;
 }
+
 
 
 

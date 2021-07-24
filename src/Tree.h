@@ -5,13 +5,19 @@
 #include <memory>
 #include <cassert>
 
-struct decision_tree_classifier : std::enable_shared_from_this<decision_tree_classifier> {
+struct decision_tree_classifier {
 
-    ///constructs from num_of_classes and training dataset
+
+    /// default constructor
+    explicit decision_tree_classifier(size_t num_of_classes) : classes_num(num_of_classes) {}
+
+    ///constructs from num_of_classes and training dataset (default constructor + fit)
     decision_tree_classifier(size_t num_of_classes,
                              const std::vector<std::vector<double>>& X,
                              const std::vector<int>& y,
                              double precision = 0.1);
+
+    void fit(const std::vector<std::vector<double>>& X, const std::vector<int>& y);
 
     int predict(const std::vector<double>& x) const;
 

@@ -60,7 +60,9 @@ void accuracy_on_training_set_test() {
 void accuracy_on_real_test() {
     size_t num_of_points = 100;
     auto[X, y] = make_binary_points_classification(num_of_points, in_circle);
-    decision_tree_classifier clf(2, X, y);
+//    decision_tree_classifier clf(2, X, y);
+    decision_tree_classifier clf(2);
+    clf.fit(X, y);
 
     auto[test_X, test_y] = make_binary_points_classification(num_of_points, in_circle);
     auto pred = clf.predict(test_X);
@@ -72,11 +74,11 @@ void accuracy_on_real_test() {
     double acc = static_cast<double>(correct) / static_cast<double>(num_of_points);
     std::cout << "accuracy on real test = " << acc << '\n';
     assert(acc >= 0.8);
-
 }
 
 int main() {
     adecvatnost_test();
     accuracy_on_training_set_test();
     accuracy_on_real_test();
+
 }
