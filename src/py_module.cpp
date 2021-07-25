@@ -48,7 +48,7 @@ std::vector<std::vector<T>> to_2d_vector(const array& iterable) {
 /// class-helper to get container arguments
 class clf_wrapper : public decision_tree_classifier {
 public:
-    explicit clf_wrapper(int num) : decision_tree_classifier(num) {}
+    explicit clf_wrapper(int num, double precision = 0.1) : decision_tree_classifier(num, precision) {}
 
     void fit(array& X, array& y) {
         decision_tree_classifier::fit(to_2d_vector<double>(py::list(X)), to_std_vector<int>(py::list(y)));
@@ -64,7 +64,8 @@ public:
 BOOST_PYTHON_MODULE (decision_tree) {
     py::to_python_converter<std::vector<int>, vector_to_list<int>>();
 
-    py::class_<clf_wrapper>("decision_tree_classifier", py::init<int>())
+    py::class_<clf_wrapper>("decision_tree_classifier", py::init<int, double>())
+            .def(py::init<int>())
             .def("fit", &clf_wrapper::fit)
             .def("predict", &clf_wrapper::predict);
 }

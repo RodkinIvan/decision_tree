@@ -4,7 +4,7 @@ from matplotlib.colors import ListedColormap
 from sklearn.datasets import make_circles
 import seaborn as sns
 
-dataset = make_circles(noise=0.2, factor=0.5, random_state=42)
+dataset = make_circles(noise=0.09, factor=0.5, random_state=42)
 
 palette = sns.color_palette(n_colors=2)
 cmap = ListedColormap(palette)
