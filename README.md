@@ -20,3 +20,6 @@ etc.
 
 - [ ] I plan to add some numpy support
 
+
+- [x] You can look at the examples in corresponding folder. Here's one:
+![](img/circles_plot.png)
