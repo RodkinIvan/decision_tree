@@ -44,33 +44,51 @@ make_binary_points_classification(size_t num, bool (* condition)(double x, doubl
 void accuracy_on_training_set_test() {
     size_t num_of_points = 100;
     auto[X, y] = make_binary_points_classification(num_of_points, in_circle);
+
     decision_tree_classifier clf(2, X, y);
     auto pred = clf.predict(X);
 
+    random_forest_classifier forest(10, 2);
+    forest.fit(X, y);
+    auto forest_pred = forest.predict(X);
+
     size_t correct = 0;
+    size_t forest_correct = 0;
     for (size_t i = 0; i < num_of_points; ++i) {
         correct += (pred[i] == y[i]);
+        forest_correct += (forest_pred[i] == y[i]);
     }
     double acc = static_cast<double>(correct) / static_cast<double>(num_of_points);
-    std::cout << "accuracy on training set = " << acc << '\n';
+    double forest_acc = static_cast<double>(forest_correct) / static_cast<double>(num_of_points);
+    std::cout << "accuracy of tree on training set = " << acc << '\n';
+    std::cout << "accuracy of forest on training set = " << forest_acc << '\n' << '\n';
     assert(acc >= 0.9);
 }
 
 void accuracy_on_real_test() {
     size_t num_of_points = 100;
     auto[X, y] = make_binary_points_classification(num_of_points, in_circle);
+
     decision_tree_classifier clf(2);
     clf.fit(X, y);
 
+    random_forest_classifier forest(10, 2);
+    forest.fit(X, y);
+
     auto[test_X, test_y] = make_binary_points_classification(num_of_points, in_circle);
     auto pred = clf.predict(test_X);
+    auto forest_pred = forest.predict(test_X);
 
     size_t correct = 0;
+    size_t forest_correct = 0;
     for (size_t i = 0; i < num_of_points; ++i) {
         correct += (pred[i] == test_y[i]);
+        forest_correct += (forest_pred[i] == test_y[i]);
     }
     double acc = static_cast<double>(correct) / static_cast<double>(num_of_points);
-    std::cout << "accuracy on real test = " << acc << '\n';
+    double forest_acc = static_cast<double>(forest_correct) / static_cast<double>(num_of_points);
+    std::cout << "accuracy of tree on real test = " << acc << '\n';
+    std::cout << "accuracy of forest on real test = " << forest_acc << '\n' << '\n';
     assert(acc >= 0.8);
 }
 
