@@ -1,4 +1,4 @@
-#include "Tree.h"
+#include "decision_tree_classifier.h"
 
 decision_tree_classifier::decision_tree_classifier(size_t num_of_classes,
                                                    const std::vector<std::vector<double>>& X,
@@ -11,7 +11,7 @@ decision_tree_classifier::decision_tree_classifier(size_t num_of_classes,
 
 
 void decision_tree_classifier::generate_children(const std::vector<std::vector<double>>& X,
-                                                 const std::vector<int>& y) {
+                                                 const std::vector<int>& y, bool enable_random_subspace) {
     assert(X.size() == y.size());
 
     double inf = gini(y);
@@ -21,25 +21,38 @@ void decision_tree_classifier::generate_children(const std::vector<std::vector<d
         decision = the_most_popular_class(y);
         return;
     }
-    auto[left_X, left_y, right_X, right_y] = best_split(X, y);
+    auto[left_X, left_y, right_X, right_y] = best_split(X, y, enable_random_subspace);
     left = std::make_shared<decision_tree_classifier>(classes_num, left_X, left_y);
     right = std::make_shared<decision_tree_classifier>(classes_num, right_X, right_y);
 }
 
 
-void decision_tree_classifier::fit(const std::vector<std::vector<double>>& X, const std::vector<int>& y) {
+void decision_tree_classifier::fit(const std::vector<std::vector<double>>& X, const std::vector<int>& y,
+                                   bool enable_random_subspace) {
     assert(X.size() == y.size());
-    generate_children(X, y);
+    generate_children(X, y, enable_random_subspace);
 }
 
 
 std::tuple<std::vector<std::vector<double>>, std::vector<int>, std::vector<std::vector<double>>, std::vector<int>>
-decision_tree_classifier::best_split(const std::vector<std::vector<double>>& X, const std::vector<int>& y) {
+decision_tree_classifier::best_split(const std::vector<std::vector<double>>& X, const std::vector<int>& y,
+                                     bool enable_random_subspace) {
     assert(X.size() == y.size());
+    int m = int(std::sqrt(classes_num));
+    std::vector<int> features(X[0].size());
+    std::vector<int> range(X[0].size());
+    std::iota(range.begin(), range.end(), 0);
+    if (enable_random_subspace) {
+        /// making sample of features
+        features.resize(m);
+        std::sample(range.begin(), range.end(), features.begin(), m, std::mt19937(std::random_device{}()));
+    } else {
+        features = range;
+    }
 
     std::pair<size_t, double> the_best_separation;
     double best_quality = 0;
-    for (size_t feature = 0; feature < X[0].size(); ++feature) {
+    for (auto feature : features) {
         for (auto& x : X) {
             double q = quality(X, y, feature, x[feature]);
             if (q >= best_quality) {

@@ -1,4 +1,4 @@
-#include "Tree.h"
+#include "decision_tree_classifier.h"
 #include <boost/python.hpp>
 #include <boost/python/numpy.hpp>
 

@@ -1,12 +1,14 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import ListedColormap
-from sklearn.datasets import make_circles
+from sklearn.datasets import make_circles, make_classification
 import seaborn as sns
 
+
+classes_num = 2
 dataset = make_circles(noise=0.09, factor=0.5, random_state=42)
 
-palette = sns.color_palette(n_colors=2)
+palette = sns.color_palette(n_colors=classes_num)
 cmap = ListedColormap(palette)
 
 x, y = dataset
@@ -34,7 +36,7 @@ def plot_surface(clf, X, y):
 from decision_tree import decision_tree_classifier
 
 
-clf = decision_tree_classifier(2)
+clf = decision_tree_classifier(classes_num)
 clf.fit(x.tolist(), y.tolist())
 plot_surface(clf, x, y)
 plt.show()

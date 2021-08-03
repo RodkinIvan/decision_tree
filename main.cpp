@@ -1,6 +1,6 @@
 #include <iostream>
 #include <tuple>
-#include "src/Tree.h"
+#include "src/random_forest_classifier.h"
 #include <random>
 
 

@@ -4,6 +4,10 @@
 #include <vector>
 #include <memory>
 #include <cassert>
+#include <random>
+
+using input_data = std::vector<std::vector<double>>;
+using output_data = std::vector<int>;
 
 struct decision_tree_classifier {
 
@@ -14,15 +18,15 @@ struct decision_tree_classifier {
 
     ///constructs from num_of_classes and training dataset (default constructor + fit)
     decision_tree_classifier(size_t num_of_classes,
-                             const std::vector<std::vector<double>>& X,
-                             const std::vector<int>& y,
+                             const input_data& X,
+                             const output_data& y,
                              double precision = 0.1);
 
-    void fit(const std::vector<std::vector<double>>& X, const std::vector<int>& y);
+    void fit(const input_data& X, const output_data& y, bool enable_random_subspace = false);
 
     int predict(const std::vector<double>& x) const;
 
-    std::vector<int> predict(const std::vector<std::vector<double>>& X) const;
+    std::vector<int> predict(const input_data& X) const;
 
 
 protected:
@@ -45,29 +49,29 @@ protected:
     int decision = 0;
 
     /// splits the data with the best condition and generates left and right children
-    void generate_children(const std::vector<std::vector<double>>& X,
-                           const std::vector<int>& y);
+    void generate_children(const input_data& X,
+                           const output_data& y, bool enable_random_subspace = false);
 
 
     /// returns the best best_split of the data
-    std::tuple<std::vector<std::vector<double>>, std::vector<int>, std::vector<std::vector<double>>, std::vector<int>>
-    best_split(const std::vector<std::vector<double>>& X, const std::vector<int>& y);
+    std::tuple<input_data, output_data, input_data, output_data>
+    best_split(const input_data& X, const output_data& y, bool enable_random_subspace = false);
 
 
     /// evaluates the quality of best_split
-    double quality(const std::vector<std::vector<double>>& X,
-                   const std::vector<int>& y,
+    double quality(const input_data& X,
+                   const output_data& y,
                    size_t feature,
                    double sep);
 
-    static std::tuple<std::vector<std::vector<double>>, std::vector<int>, std::vector<std::vector<double>>, std::vector<int>>
-    split(const std::vector<std::vector<double>>& X, const std::vector<int>& y, size_t feature, double sep);
+    static std::tuple<input_data, output_data, input_data, output_data>
+    split(const input_data& X, const output_data& y, size_t feature, double sep);
 
     /// calculates the gini's informativity
-    double gini(const std::vector<int>& y) const;
+    double gini(const output_data& y) const;
 
     /// trivial act
-    int the_most_popular_class(const std::vector<int>& y) const;
+    int the_most_popular_class(const output_data& y) const;
 
 
 };
