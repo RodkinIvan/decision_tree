@@ -11,10 +11,17 @@ void adecvatnost_test() {
                                           {1,   0},
                                           {1,   1}};
     std::vector<int> y = {0, 1, 1, 1, 0};
+
     decision_tree_classifier clf(2);
     clf.fit(X, y);
-    std::vector<int> pred = clf.predict(X);
+
+    random_forest_classifier forest(10, 2);
+    forest.fit(X, y);
+
+    auto pred = clf.predict(X);
+    auto forest_pred = forest.predict(X);
     assert(pred == y);
+    assert(forest_pred == y);
 }
 
 bool in_circle(double x, double y) {
@@ -96,5 +103,4 @@ int main() {
     adecvatnost_test();
     accuracy_on_training_set_test();
     accuracy_on_real_test();
-
 }

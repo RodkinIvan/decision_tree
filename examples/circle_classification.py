@@ -12,10 +12,15 @@ palette = sns.color_palette(n_colors=classes_num)
 cmap = ListedColormap(palette)
 
 x, y = dataset
-plt.scatter(x[:, 0], x[:, 1], c=y, cmap=cmap, alpha=.8)
 
+fig, axs = plt.subplots(figsize=(10, 5), ncols=2)
+axs[0].set_title("Decision Tree")
+axs[1].set_title("Random Forest")
 
-def plot_surface(clf, X, y):
+axs[0].scatter(x[:, 0], x[:, 1], c=y, cmap=cmap, alpha=.8)
+axs[1].scatter(x[:, 0], x[:, 1], c=y, cmap=cmap, alpha=.8)
+
+def plot_surface(clf, X, y, ax, fig):
     plot_step = 0.01
     palette = sns.color_palette(n_colors=len(np.unique(y)))
     cmap = ListedColormap(palette)
@@ -23,22 +28,28 @@ def plot_surface(clf, X, y):
     y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
     xx, yy = np.meshgrid(np.arange(x_min, x_max, plot_step),
                          np.arange(y_min, y_max, plot_step))
-    plt.tight_layout(h_pad=0.5, w_pad=0.5, pad=2.5)
+    fig.tight_layout(h_pad=0.5, w_pad=0.5, pad=2.5)
 
     Z = clf.predict(np.c_[xx.ravel(), yy.ravel()].tolist())
     Z = np.asarray(Z).reshape(xx.shape)
-    cs = plt.contourf(xx, yy, Z, cmap=cmap, alpha=0.3)
+    cs = ax.contourf(xx, yy, Z, cmap=cmap, alpha=0.3)
 
-    plt.scatter(X[:, 0], X[:, 1], c=y, cmap=cmap, alpha=.7,
+    ax.scatter(X[:, 0], X[:, 1], c=y, cmap=cmap, alpha=.7,
                 edgecolors=np.array(palette)[y], linewidths=2)
 
 
 from decision_tree import decision_tree_classifier
-
+from decision_tree import random_forest_classifier
 
 clf = decision_tree_classifier(classes_num)
+forest = random_forest_classifier(10, classes_num)
+
 clf.fit(x.tolist(), y.tolist())
-plot_surface(clf, x, y)
+forest.fit(x.tolist(), y.tolist())
+
+plot_surface(clf, x, y, axs[0], fig)
+plot_surface(forest, x, y, axs[1], fig)
+
 plt.show()
 
 

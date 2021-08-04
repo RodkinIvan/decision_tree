@@ -14,7 +14,7 @@ import decision_tree as tree
 ```
 or
 ```
-from decision_tree import decision_tree_classifier
+from decision_tree import decision_tree_classifier, random_forest_classifier
 ```
 etc.
 
