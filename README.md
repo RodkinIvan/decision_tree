@@ -8,11 +8,11 @@ There is minimalistic implementation of Decision Tree and Random Forest on C++ w
 - [x] The src/py_module.cpp is necessary for building a python module from it using boost::python
 - [x] There are some tests in main.cpp, which can be ran by uncommenting add_executable in CMakeLists.txt
 - [x] Dynamic library module/decision_tree.so acts like a python module, so, for example, being in the same folder with it, you can import it using
-```
+```Python
 import decision_tree as tree
 ```
 or
-```
+```Python
 from decision_tree import decision_tree_classifier, random_forest_classifier
 ```
 etc.
