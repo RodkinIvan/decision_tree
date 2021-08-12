@@ -2,7 +2,7 @@
 
 ## Decision Tree and Random Forest
 
-There is minimalistic realization of Decision Tree and Random Forest on C++ which can be also used as python module
+There is minimalistic implementation of Decision Tree and Random Forest on C++ which can be also used as python module
 - [x] All the implementation of the tree in __src/decision_tree_classifier.*__
 - [x] The random forest wrapper implementation in __src/random_forest_classifier.*__
 - [x] The src/py_module.cpp is necessary for building a python module from it using boost::python
