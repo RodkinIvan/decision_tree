@@ -16,11 +16,11 @@ using iterator = py::stl_input_iterator<T>;
 template<typename T>
 struct vector_to_list {
     static PyObject* convert(const std::vector<T>& vec) {
-        auto* l = new boost::python::list();
+        auto l = boost::python::list();
         for (auto& i : vec) {
-            l->append(i);
+            l.append(i);
         }
-        return l->ptr();
+        return l.ptr();
     }
 };
 
